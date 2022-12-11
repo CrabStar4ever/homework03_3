@@ -1,0 +1,23 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: mq-service-consumer
+  cloud:
+    function:
+      definition: sink;
+    stream:
+      binders:
+        default-binder:
+          type: rabbit
+      bindings:
+        sink-in-0:
+          destination: message-center
+          contentType: application/json
+          group: ${spring.application.name}
+          binder: default-binder
+  rabbitmq:
+    addresses: localhost
+    port: 5672
+    username: guest
+    password: guest

@@ -1,0 +1,23 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: mq-service-producer
+  cloud:
+    function:
+      definition: source;
+    stream:
+      binders:
+        default-binder:
+          type: rabbit
+      bindings:
+        source-out-0:
+          destination: message-center
+          contentType: application/json
+          group: ${spring.application.name}
+          binder: default-binder
+  rabbitmq:
+    addresses: localhost
+    port: 5672
+    username: guest
+    password: guest
