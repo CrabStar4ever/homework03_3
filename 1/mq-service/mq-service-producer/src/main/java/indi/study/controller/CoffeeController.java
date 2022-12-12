@@ -6,15 +6,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
-public class MessgeController {
+public class CoffeeController {
 
     @Autowired
     private ProducerService producerService;
 
-    @GetMapping("/sendMessage")
-    public void sendMessage(@RequestParam("message") String message) {
-        producerService.sendMessage(message);
+    @GetMapping("/addCoffee")
+    public void addCoffee (@RequestParam("name") String name, @RequestParam("price") BigDecimal price) {
+        producerService.addCoffee(name, price);
     }
 
 }

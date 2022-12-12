@@ -1,31 +1,41 @@
 package indi.study.service.impl;
 
+import indi.study.model.Coffee;
 import indi.study.service.ProducerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Sinks;
 
-import java.util.function.Consumer;
+import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.function.Supplier;
 
 @Slf4j
 @Service
 public class ProducerServiceImpl implements ProducerService {
 
-    private final Sinks.Many<Message<String>> sinks = Sinks.many().multicast().onBackpressureBuffer();
+    private BlockingQueue<Coffee> queue;
+
+    @PostConstruct
+    private void init() {
+        queue = new ArrayBlockingQueue<>(100);
+    }
 
     @Bean
-    public Supplier<Flux<Message<String>>> source() {
-        return sinks::asFlux;
+    public Supplier<Coffee> source() {
+        return () -> {
+            return queue.poll();
+        };
     }
 
     @Override
-    public void sendMessage(String message) {
-        log.info("Producer produce message:{}", message);
-        Message<String> msg = MessageBuilder.withPayload(message).build();
+    public void addCoffee(String name, BigDecimal price) {
+        log.info("Producer produce a new coffee {} for ${}", name, price);
+        Coffee coffee = new Coffee(UUID.randomUUID().toString(), name, price);
+        boolean result = queue.offer(coffee);
+        log.info("New coffee added with id:{}", coffee.getId());
     }
 }
