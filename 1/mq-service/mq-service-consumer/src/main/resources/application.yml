@@ -5,17 +5,23 @@ spring:
     name: mq-service-consumer
   cloud:
     function:
-      definition: sink;
+      definition: sink;input;
     stream:
-      binders:
-        default-binder:
-          type: rabbit
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      default-binder: kafka
       bindings:
         sink-in-0:
           destination: message-center
           contentType: application/json
           group: ${spring.application.name}
-          binder: default-binder
+          binder: rabbit
+        input-in-0:
+          destination: kafka-center
+          contentType: application/json
+          binder: kafka
   rabbitmq:
     addresses: localhost
     port: 5672

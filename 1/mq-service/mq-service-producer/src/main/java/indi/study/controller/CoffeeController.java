@@ -19,4 +19,9 @@ public class CoffeeController {
         producerService.addCoffee(name, price);
     }
 
+    @GetMapping("/addCoffee2")
+    public void addCoffee2 (@RequestParam("name") String name, @RequestParam("price") BigDecimal price) {
+        producerService.addCoffee2(name, price);
+    }
+
 }

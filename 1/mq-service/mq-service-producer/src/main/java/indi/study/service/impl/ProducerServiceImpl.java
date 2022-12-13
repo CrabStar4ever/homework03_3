@@ -19,9 +19,12 @@ public class ProducerServiceImpl implements ProducerService {
 
     private BlockingQueue<Coffee> queue;
 
+    private BlockingQueue<Coffee> kafka_queue;
+
     @PostConstruct
     private void init() {
         queue = new ArrayBlockingQueue<>(100);
+        kafka_queue = new ArrayBlockingQueue<>(100);
     }
 
     @Bean
@@ -31,11 +34,26 @@ public class ProducerServiceImpl implements ProducerService {
         };
     }
 
+    @Bean
+    public Supplier<Coffee> output() {
+        return () -> {
+            return kafka_queue.poll();
+        };
+    }
+
     @Override
     public void addCoffee(String name, BigDecimal price) {
         log.info("Producer produce a new coffee {} for ${}", name, price);
         Coffee coffee = new Coffee(UUID.randomUUID().toString(), name, price);
         boolean result = queue.offer(coffee);
+        log.info("New coffee added with id:{}", coffee.getId());
+    }
+
+    @Override
+    public void addCoffee2(String name, BigDecimal price) {
+        log.info("Producer produce a new coffee {} for ${}", name, price);
+        Coffee coffee = new Coffee(UUID.randomUUID().toString(), name, price);
+        boolean result = kafka_queue.offer(coffee);
         log.info("New coffee added with id:{}", coffee.getId());
     }
 }

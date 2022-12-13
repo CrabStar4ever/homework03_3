@@ -16,7 +16,14 @@ public class ConsumerServiceImpl implements ConsumerService {
     @Bean
     Consumer<Coffee> sink() {
         return coffee-> {
-            log.info("Consumer receive coffee:{}, price:{}", coffee.getName(), coffee.getPrice());
+            log.info("Rabbit receive coffee:{}, price:{}", coffee.getName(), coffee.getPrice());
+        };
+    }
+
+    @Bean
+    Consumer<Coffee> input() {
+        return coffee-> {
+            log.info("Kafka receive coffee:{}, price:{}", coffee.getName(), coffee.getPrice());
         };
     }
 
