@@ -1,0 +1,41 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: mq-service-consumer
+  cloud:
+    function:
+      definition: sink;input;
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      default-binder: kafka
+      bindings:
+        sink-in-0:
+          destination: message-center
+          contentType: application/json
+          group: ${spring.application.name}
+          binder: rabbit
+        input-in-0:
+          destination: kafka-center
+          contentType: application/json
+          binder: kafka
+  rabbitmq:
+    addresses: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+app:
+  id: ${spring.application.name}
+apollo:
+  config-service: http://172.21.26.15:8080
+  autoUpdateInjectedSpringProperties: true
+  meta: http://172.21.26.15:8080
+  bootstrap:
+    enabled: true
+    eagerLoad:
+      enabled: true
+    namespaces: application
